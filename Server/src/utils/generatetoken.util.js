@@ -8,8 +8,8 @@ export const generateAuthToken = (userId, res) => {
     res.cookie("auth_token", token, {
         maxAge: 7 * 24 * 60 * 60 * 1000, //MS
         httpOnly: true, // prevent XSS attacks cross-site scripting attacks
-        samesite: "strict", // CSRF attacks cross-site request forgery attacks
-        secure: process.env.NODE_ENV !== "development" 
+        sameSite: "none", 
+        secure: process.env.NODE_ENV === "production", // allow non-https locally 
     });
 };
 
@@ -21,7 +21,7 @@ export const generateResetToken = (email, res) => {
     res.cookie("reset_token", token, {
         maxAge: 10 * 60 * 1000, //MS
         httpOnly: true, // prevent XSS attacks cross-site scripting attacks
-        samesite: "strict", // CSRF attacks cross-site request forgery attacks
-        secure: process.env.NODE_ENV !== "development" 
+        sameSite: "none", 
+        secure: process.env.NODE_ENV === "production", // allow non-https locally 
     });
 };
