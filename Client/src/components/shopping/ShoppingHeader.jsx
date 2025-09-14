@@ -1,4 +1,4 @@
-import { LogOut, Menu, ShoppingBag, ShoppingCart, UserCog, X } from 'lucide-react';
+import { LogIn, LogOut, Menu, ShoppingBag, ShoppingCart, UserCog, X } from 'lucide-react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { shoppingHeaderMenuItems } from '../../config/index';
@@ -49,8 +49,10 @@ const HeaderRightSection = () => {
     const { cartItems, fetchCartItems } = useCartStore();
 
     useEffect(() => {
-        fetchCartItems(authUser?._id, false);
-    }, [fetchCartItems]);
+        if(authUser){
+            fetchCartItems(authUser?._id, false);
+        }
+    }, [authUser, fetchCartItems]);
 
     return (
         <div className="flex flex-col lg:flex-row lg:items-center gap-4 relative pt-4 lg:pt-0">
@@ -75,26 +77,38 @@ const HeaderRightSection = () => {
                     cartItems={cartItems && cartItems.length > 0 ? cartItems : []} 
                 />
             }
-            <div role="button" onClick={() => setOpenDropdown(!openDropdown)} className="avatar avatar-placeholder cursor-pointer">
-                <div className="bg-black text-white w-12 rounded-full">
-                    <span className="text-xl font-extrabold">{authUser?.fullName[0]}</span>
+            {authUser ? (
+                <div className="relative">
+                    <div role="button" onClick={() => setOpenDropdown(!openDropdown)} className="avatar avatar-placeholder cursor-pointer">
+                        <div className="bg-black text-white w-12 rounded-full">
+                            <span className="text-xl font-extrabold">{authUser?.fullName[0]}</span>
+                        </div>
+                    </div>
+                    {openDropdown && (
+                        <div className="fixed top-[320px] right-[365px] mt-2 mr-0 w-64 bg-white border border-gray-200 rounded shadow-lg z-50
+                        transform translate-x-[20%] text-black lg:top-0 lg:right-[135px]">
+                            <div className="w-full border-b border-b-gray-200">
+                                <div className="px-3 py-2 font-bold">Logged in as {authUser?.fullName}</div>
+                            </div>
+                            <div className="px-3 py-2 flex items-center font-semibold cursor-pointer" onClick={() => navigate("/shop/account")}>
+                                <UserCog color="black" className="mr-2 w-4 h-4" />
+                                Account
+                            </div>
+                            <div className="px-3 py-2 flex items-center cursor-pointer font-semibold" onClick={() => logOut(navigate)}>
+                                <LogOut color="black" className="mr-2 w-4 h-4" />
+                                Logout
+                            </div>
+                        </div>
+                    )}
                 </div>
-            </div>
-            {openDropdown && (
-                <div className="fixed top-[320px] right-[365px] mt-2 mr-0 w-70 bg-white border border-gray-200 rounded shadow-lg z-1000
-                transform translate-x-[20%] text-black lg:top-0 lg:right-[135px]">
-                    <div className="w-full border-b border-b-gray-200">
-                        <div className="px-3 py-2 font-bold">Logged in as {authUser?.fullName}</div>
-                    </div>
-                    <div className="px-3 py-2 flex items-center font-semibold cursor-pointer" onClick={() => navigate("/shop/account")}>
-                        <UserCog color="black" className="mr-2 w-4 h-4" />
-                        Account
-                    </div>
-                    <div className="px-3 py-2 flex items-center cursor-pointer font-semibold" onClick={() => logOut(navigate)}>
-                        <LogOut color="black" className="mr-2 w-4 h-4" />
-                        LogOut
-                    </div>
-                </div>
+            ) : (
+                <button 
+                    className="btn btn-neutral cursor-pointer text-white" 
+                    onClick={() => navigate('/login')}
+                >
+                    <LogIn color="white" className="mr-2 w-4 h-4" />
+                    Login
+                </button>
             )}
         </div>
     );

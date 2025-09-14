@@ -1,16 +1,13 @@
 import { Loader } from "lucide-react";
 import { useAuthStore } from "../../store/useAuthStore";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
-const RoleRedirect = ({ allowedRoles }) => {
-    const { authUser, isCheckingAuth, checkAuth } = useAuthStore();
+const RoleRedirect = ({ only = null }) => {
+    const { authUser, isCheckingAuth } = useAuthStore();
+    const location = useLocation();
 
-    useEffect(() => {
-        checkAuth();
-    }, [checkAuth]);
-
-    if(isCheckingAuth && !authUser) {
+    if(isCheckingAuth) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <Loader className='size-10 animate-spin' />
@@ -18,13 +15,33 @@ const RoleRedirect = ({ allowedRoles }) => {
         );
     }
 
-    if(!authUser) {
-        return <Navigate to='/login' replace />;
+    // Admin only guard
+    if(only === "admin"){
+        if(!authUser) {
+            return <Navigate to="/shop/home" replace state={{ from: location.pathname }} />;
+        }
+        if(authUser.role !== "admin") {
+            return <Navigate to="/shop/home" replace />;
+        }
+        return <Outlet />;
     }
-    if(allowedRoles && !allowedRoles.includes(authUser.role)) {
-        const redirectTo = authUser.role === 'admin' ? '/admin' : '/shop/home';
-        return <Navigate to={redirectTo} replace />;
+
+    // User only guard
+    if(only === "user"){
+        if(!authUser) {
+            // Guest can still see /shop pages (except checkout)
+            if(location.pathname.includes("/checkout")){
+                return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+            }
+            return <Outlet />;
+        }
+        if(authUser.role === "admin") {
+            return <Navigate to="/admin" replace />;
+        }
+        return <Outlet />;
     }
+    
+    // If no specific role is required, allow access
 
     return <Outlet />;
 };

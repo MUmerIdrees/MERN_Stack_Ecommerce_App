@@ -37,7 +37,7 @@ const ShoppingOrders = () => {
                         {
                             orderList && orderList.length > 0 ? 
                             orderList.map((orderItem) => (
-                                <tr>
+                                <tr key={orderItem?._id}>
                                     <td>{orderItem?._id}</td>
                                     <td>{orderItem?.orderDate.split("T")[0]}</td>
                                     <td>

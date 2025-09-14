@@ -13,11 +13,12 @@ import { useCartStore } from "../../store/useCartStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import ProductDetails from "../../components/shopping/ProductDetails";
 import { useFeatureStore } from "../../store/useFeatureStore";
+import { toast } from "react-toastify";
 
 const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
-  const { addToCart, fetchCartItems } = useCartStore();
+  const { addToCart, fetchCartItems, addItem, cartItems } = useCartStore();
   const { authUser } = useAuthStore();
   const { fetchFilteredProducts, productsList, fetchProductDetails, productDetails } = useShopStore();
   const { getFeatureImages, featureImagesList } = useFeatureStore();
@@ -38,9 +39,24 @@ const HomePage = () => {
     setOpenDetailsModal(true);
   };
 
-  const handleAddToCart = async (currentProductId) => {
-    await addToCart({ userId: authUser?._id, productId: currentProductId, quantity: 1 });
-    await fetchCartItems(authUser?._id);
+  const handleAddToCart = async (currentProductId, getTotalStock, product) => {
+    if(authUser){
+        let getCartItems = cartItems || [];
+        if(getCartItems.length){
+            const indexOfCurrentItem = getCartItems.findIndex(item => item.productId === currentProductId);
+            if(indexOfCurrentItem > -1){
+                const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+                if(getQuantity + 1 > getTotalStock){
+                    toast.error(`Only ${getQuantity} quantity can be added for this item`);
+                    return;
+                }
+            }
+        }
+        await addToCart({ userId: authUser?._id, productId: currentProductId, quantity: 1 });
+        await fetchCartItems(authUser?._id);
+    } else {
+        addItem(product, getTotalStock);
+    }
   }
 
   const categories =  [

@@ -12,11 +12,11 @@ const ProductTile = ({ product, setCurrentEditedId, setOpenAddProductBox, setFor
                 <h2 className="card-title">{product?.title}</h2>
                 <div className="flex justify-between items-center mb-2">
                     <span className={`${product?.salePrice > 0 ? 'line-through' : ''} text-lg font-semibold text-black`}>
-                        RS{product?.price}
+                        Rs. {product?.price}
                     </span>
                     {product?.salePrice > 0 && (
                         <span className="text-lg font-semibold">
-                            RS{product?.salePrice}
+                            Rs. {product?.salePrice}
                         </span>
                     )}
                 </div>

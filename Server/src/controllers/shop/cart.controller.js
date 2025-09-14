@@ -39,6 +39,50 @@ export const addToCart = async (req, res) => {
     }
 };
 
+export const mergeGuestCart = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const guestCartItems = req.body.items;
+
+        if(!userId || !guestCartItems || !Array.isArray(guestCartItems) || guestCartItems.length === 0) {
+            return res.status(400).json({ message: "Invalid data provided "});
+        }
+
+        let cart = await Cart.findOne({ userId });
+
+        if(!cart){
+            cart = new Cart({ userId, items: [] });
+        }
+
+        for(const guestCartItem of guestCartItems) {
+            const { productId, quantity } = guestCartItem;
+            if(!productId || quantity <= 0) {
+                continue;
+            }
+
+            const product = await Product.findById(productId);
+            if(!product) {
+                continue;
+            }
+
+            const findCurrentProductIndex = cart.items.findIndex(item => item.productId.toString() === productId);
+            if(findCurrentProductIndex === -1){
+                cart.items.push({ productId, quantity });
+            } else {
+                cart.items[findCurrentProductIndex].quantity += quantity;
+            }
+        }
+
+        await cart.save();
+
+        res.status(200).json({ data: cart });
+        
+    } catch (error) {
+        console.log("Error in merge guest cart controller", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
 export const fetchCartItems = async (req, res) => {
     try {
         const { userId } = req.params;

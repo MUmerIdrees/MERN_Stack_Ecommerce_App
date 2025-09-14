@@ -40,11 +40,11 @@ const ShoppingProductTile = ({ product, handleGetProductDetails, handleAddToCart
                 </div>
                 <div className="flex justify-between items-center mb-2">
                     <span className={`${product?.salePrice > 0 ? 'line-through' : '' } text-[16px] text-black font-semibold`}>
-                        RS{product?.price}
+                        Rs. {product?.price}
                     </span>
                     {
                         product?.salePrice > 0 ? 
-                        <span className="text-[16px] text-black font-semibold">RS{product?.salePrice}</span> : null
+                        <span className="text-[16px] text-black font-semibold">Rs. {product?.salePrice}</span> : null
                     }
                 </div>
                 <div className="card-actions">
@@ -53,7 +53,7 @@ const ShoppingProductTile = ({ product, handleGetProductDetails, handleAddToCart
                         <button className="btn btn-neutral w-full opacity-60 cursor-not-allowed">
                             Out Of Stock
                         </button> : 
-                        <button onClick={() => handleAddToCart(product?._id, product?.totalStock)} className="btn btn-neutral w-full">
+                        <button onClick={() => handleAddToCart(product?._id, product?.totalStock, product)} className="btn btn-neutral w-full">
                             Add to cart
                         </button>
                     }

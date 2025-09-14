@@ -45,7 +45,7 @@ const AdminDashboard = () => {
                     <div className="card shadow-sm shadow-gray-300">
                         <div className="card-body">
                             <h2 className="card-title">Total Revenue</h2>
-                            <p className="text-2xl font-bold">{`RS${dashboardData.totalRevenue.toFixed(2)}`}</p>
+                            <p className="text-2xl font-bold">{`Rs. ${dashboardData.totalRevenue.toFixed(2)}`}</p>
                         </div>
                     </div>
                 </div>

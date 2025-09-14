@@ -6,13 +6,14 @@ import { Loader } from "lucide-react";
 import { useCartStore } from "../../store/useCartStore";
 import ProductDetails from "../../components/shopping/ProductDetails";
 import { useAuthStore } from "../../store/useAuthStore";
+import { toast } from "react-toastify";
 
 const SearchProductPage = () => {
     const [keyword, setKeyword] = useState('');
     const [searchParams, setSearchParams] = useSearchParams();
     const { searchResults, getSearchResults, resetSearchResults, isSearching } = useShopStore();
     const [openDetailsModal, setOpenDetailsModal] = useState(false);
-    const { addToCart, fetchCartItems, cartItems } = useCartStore();
+    const { addToCart, fetchCartItems, cartItems, addItem } = useCartStore();
     const { fetchProductDetails, productDetails } = useShopStore();
     const { authUser } = useAuthStore();
 
@@ -21,20 +22,24 @@ const SearchProductPage = () => {
             setOpenDetailsModal(true);
         };
     
-    const handleAddToCart = async (currentProductId, getTotalStock) => {
-        let getCartItems = cartItems || [];
-        if(getCartItems.length){
-            const indexOfCurrentItem = getCartItems.findIndex(item => item.productId === currentProductId);
-            if(indexOfCurrentItem > -1){
-                const getQuantity = getCartItems[indexOfCurrentItem].quantity;
-                if(getQuantity + 1 > getTotalStock){
-                    toast.error(`Only ${getQuantity} quantity can be added for this item`);
-                    return;
+    const handleAddToCart = async (currentProductId, getTotalStock, product) => {
+        if(authUser){
+            let getCartItems = cartItems || [];
+            if(getCartItems.length){
+                const indexOfCurrentItem = getCartItems.findIndex(item => item.productId === currentProductId);
+                if(indexOfCurrentItem > -1){
+                    const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+                    if(getQuantity + 1 > getTotalStock){
+                        toast.error(`Only ${getQuantity} quantity can be added for this item`);
+                        return;
+                    }
                 }
             }
+            await addToCart({ userId: authUser?._id, productId: currentProductId, quantity: 1 });
+            await fetchCartItems(authUser?._id);
+        } else {
+            addItem(product, getTotalStock);
         }
-        await addToCart({ userId: authUser?._id, productId: currentProductId, quantity: 1 });
-        await fetchCartItems(authUser?._id);
     }
 
     useEffect(() => {

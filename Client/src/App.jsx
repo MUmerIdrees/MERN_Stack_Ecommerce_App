@@ -1,7 +1,7 @@
 import { useAuthStore } from './store/useAuthStore';
 import './index.css';
 import { useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import {Loader} from 'lucide-react';
 import SignUpPage from './pages/auth/SignUpPage';
 import EmailVerify from './pages/auth/EmailVerify';
@@ -28,12 +28,13 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 function App() {
 
   const {authUser, checkAuth, isCheckingAuth} = useAuthStore();
+  const location = useLocation();
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  if(isCheckingAuth && !authUser) {
+  if(isCheckingAuth){ 
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader className='size-10 animate-spin' />
@@ -49,14 +50,17 @@ function App() {
             authUser ? (
               authUser?.role === "admin" ? <Navigate to="/admin" replace /> : <Navigate to="/shop/home" replace />
             ) : (
-              <Navigate to="/login" />
+              <Navigate to="/shop/home" replace />
             )
           } 
         />
+        
         <Route element={<AuthLayout />}>
           <Route path="/login" element={
               authUser ? (
-                authUser?.role === "admin" ? <Navigate to="/admin" replace /> : <Navigate to="/shop/home" replace />
+                authUser.role === "admin"
+                  ? <Navigate to="/admin" replace />
+                  : <Navigate to={location.state?.from || "/shop/home"} replace />
               ) : (
                 <LogInPage />
               )
@@ -76,7 +80,7 @@ function App() {
           <Route path='/updatepassword' element={<UpdatePassword />} />
         </Route> 
 
-        <Route element={<RoleRedirect allowedRoles={["admin"]} />}> 
+        <Route element={<RoleRedirect only="admin" />}> 
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />
@@ -84,7 +88,7 @@ function App() {
           </Route>
         </Route>
 
-        <Route element={<RoleRedirect allowedRoles={["user"]} />}>
+        <Route element={<RoleRedirect only="user" />}>
           <Route path="/shop" element={<ShoppingLayout />}>
             <Route path="home" element={<HomePage />} />
             <Route path="listing" element={<ShoppingListing />} />

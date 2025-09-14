@@ -35,7 +35,7 @@ const AdminOrders = () => {
                         {
                             orderList && orderList.length > 0 ? 
                             orderList.map((orderItem) => (
-                                <tr className="text-black">
+                                <tr key={orderItem?._id} className="text-black">
                                     <td>{orderItem?._id}</td>
                                     <td>{orderItem?.orderDate.split("T")[0]}</td>
                                     <td>
@@ -46,7 +46,7 @@ const AdminOrders = () => {
                                             {orderItem?.orderStatus}
                                         </span>
                                     </td>
-                                    <td>${orderItem?.totalAmount}</td>
+                                    <td>Rs. {orderItem?.totalAmount}</td>
                                     <td>
                                         <button 
                                             onClick={() => handleFetchOrderDetails(orderItem?._id)} 

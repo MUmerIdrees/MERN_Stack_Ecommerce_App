@@ -39,7 +39,7 @@ const AdminOrderDetails = ({ setOpenDetailsModal, orderDetails }) => {
                         </div>
                         <div className="flex items-center justify-between mt-2">
                             <p className="font-medium text-black">Order Price</p>
-                            <p className="text-black">${orderDetails?.totalAmount}</p>
+                            <p className="text-black">Rs. {orderDetails?.totalAmount}</p>
                         </div>
                         <div className="flex items-center justify-between mt-2">
                             <p className="font-medium text-black">Order Status</p>
@@ -61,10 +61,10 @@ const AdminOrderDetails = ({ setOpenDetailsModal, orderDetails }) => {
                                 {
                                     orderDetails?.cartItems && orderDetails?.cartItems.length > 0 ?
                                     (orderDetails?.cartItems.map(item =>
-                                        <li className="flex items-center justify-between text-black">
+                                        <li key={item?._id} className="flex items-center justify-between text-black">
                                             <span>Title: {item?.title}</span>
                                             <span>Quantity: {item?.quantity}</span>
-                                            <span>Price: RS{item?.price}</span>
+                                            <span>Price: Rs. {item?.price}</span>
                                         </li>
                                     )) : null
                                 }

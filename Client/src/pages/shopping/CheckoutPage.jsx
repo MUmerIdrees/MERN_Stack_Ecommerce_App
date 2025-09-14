@@ -83,13 +83,13 @@ const CheckoutPage = () => {
                 <div className="flex flex-col gap-4 p-5 shadow-sm shadow-gray-300 rounded-lg">
                     {
                         cartItems && cartItems.length > 0 ?
-                        cartItems.map(cartItem => <UserCartItemsContent cartItem={cartItem} />) : 
+                        cartItems.map(cartItem => <UserCartItemsContent key={cartItem?._id} cartItem={cartItem} />) : 
                         null
                     }
                     <div className="mt-8 space-y-4">
                         <div className="flex justify-between">
                             <span className="font-bold">Total</span>
-                            <span className="font-bold">${totalCartAmount}</span>
+                            <span className="font-bold">Rs. {totalCartAmount}</span>
                         </div>
                     </div>
                     <div className="mt-4 w-full">

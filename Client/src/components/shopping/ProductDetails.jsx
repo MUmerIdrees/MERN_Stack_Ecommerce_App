@@ -66,11 +66,11 @@ const ProductDetails = ({ setOpenDetailsModal, productDetails, handleAddToCart }
                             <h1 className="text-3xl font-extrabold">{productDetails.title}</h1>
                             <p className="text-gray-300 text-2xl">{productDetails.description}</p>
                             <div className="flex items-center justify-between">
-                                <p className={`text-3xl font-bold text-primary ${productDetails?.salePrice > 0 ? 'line-through' : ''}`}>
-                                    ${productDetails?.price}
+                                <p className={`text-3xl font-bold text-neutral ${productDetails?.salePrice > 0 ? 'line-through' : ''}`}>
+                                    Rs. {productDetails?.price}
                                 </p>
                                 {
-                                    productDetails?.salePrice > 0 ? <p className="text-2xl text-blue-300">${productDetails?.salePrice}</p>
+                                    productDetails?.salePrice > 0 ? <p className="text-2xl text-gary-300">Rs. {productDetails?.salePrice}</p>
                                     : null
                                 }
                             </div>
@@ -89,7 +89,7 @@ const ProductDetails = ({ setOpenDetailsModal, productDetails, handleAddToCart }
                                 </button> : 
                                 <button 
                                     className="btn btn-neutral" 
-                                    onClick={() => handleAddToCart(productDetails?._id, productDetails?.totalStock)}
+                                    onClick={() => handleAddToCart(productDetails?._id, productDetails?.totalStock, productDetails)}
                                 >
                                     Add to Cart
                                 </button>

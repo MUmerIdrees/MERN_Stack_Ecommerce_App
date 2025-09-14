@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
 import { toast } from 'react-toastify';
+import { useCartStore } from "./useCartStore.js";
 
 export const useAuthStore = create((set) => ({
     authUser: null,
@@ -63,9 +64,23 @@ export const useAuthStore = create((set) => ({
         try {
             const res = await axiosInstance.post('/auth/login', data);
             const user = res.data?.user;
-            console.log("Login User:", user);
             set({ authUser: user });
             toast.success("Logged in successfully");
+
+            // Merge guest cart if exists
+            const guestCartItems = JSON.parse(localStorage.getItem('guest_cart')) || [];
+            if (guestCartItems.length > 0) {
+                await axiosInstance.post('/shop/cart/merge', { 
+                    items: guestCartItems.map(i => ({ 
+                        productId: i.productId, 
+                        quantity: i.quantity 
+                    })),
+                });
+
+                useCartStore.getState().clearCart();
+                await useCartStore.getState().fetchCartItems(user?._id, false);
+            }
+                
         } catch (error) {
             toast.error(error?.response?.data?.message);
         } finally {
@@ -76,7 +91,7 @@ export const useAuthStore = create((set) => ({
     logOut: async (navigate) => {
         try {
             await axiosInstance.post('/auth/logout');
-            navigate('/login');
+            navigate('/shop/home');
             set({ authUser: null });
             toast.success("Logout Successfully");
         } catch (error) {

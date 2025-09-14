@@ -6,11 +6,15 @@ import { toast } from "react-toastify";
 
 const UserCartItemsContent = ({ cartItem }) => {
     const { authUser } = useAuthStore();
-    const { deleteCartItem, updateCartItemQuantity, cartItems } = useCartStore();
+    const { deleteCartItem, updateCartItemQuantity, cartItems, deleteItem } = useCartStore();
     const { productsList } = useShopStore();
 
     const handleCartItemDelete = async (getCartItem) => {
-        await deleteCartItem({ userId: authUser?._id, productId: getCartItem?.productId });
+        if(authUser){
+            await deleteCartItem({ userId: authUser?._id, productId: getCartItem?.productId });
+        } else {
+            deleteItem(getCartItem?.productId);
+        }
     };
 
     const handleCartItemQuantity = async (getCartItem, typeOfAction) => {
@@ -63,7 +67,7 @@ const UserCartItemsContent = ({ cartItem }) => {
             </div>
             <div className="flex flex-col items-end">
                 <p className="font-semibold">
-                    RS{(
+                    Rs. {(
                         (cartItem?.salePrice > 0 ? cartItem?.salePrice: cartItem?.price) * cartItem?.quantity
                     ).toFixed(2)}
                 </p>

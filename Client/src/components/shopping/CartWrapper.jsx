@@ -53,7 +53,7 @@ const UserCartWrapper = ({ setOpenCartBox, cartItems }) => {
                 <div className="mt-8 space-y-4">
                     <div className="flex justify-between">
                         <span className="font-bold">Total</span>
-                        <span className="font-bold">RS{totalCartAmount}</span>
+                        <span className="font-bold">Rs. {totalCartAmount}</span>
                     </div>
                 </div>
                 <button 
