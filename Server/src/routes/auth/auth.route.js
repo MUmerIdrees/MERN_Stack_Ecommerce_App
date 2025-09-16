@@ -27,10 +27,12 @@ router.get('/google/callback', (req, res, next) => {
     generateAuthToken(user._id, res);
 
     if(user?.role === 'admin') {
-      res.redirect(process.env.CLIENT_URL + '/admin');
+      res.redirect(`${process.env.CLIENT_URL}/admin`);
     }
     if(user?.role === 'user') {
-      res.redirect(process.env.CLIENT_URL + '/shop');
+      // get redirect target from state or fallback
+      const from = req.query.state || '/shop/home';
+      res.redirect(`${process.env.CLIENT_URL}/oauth-success?from=${encodeURIComponent(from)}`);
     }
 });
 

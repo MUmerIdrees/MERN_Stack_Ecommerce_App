@@ -53,6 +53,27 @@ export const useCartStore = create((set, get) => ({
         localStorage.removeItem("guest_cart");
     },
 
+    mergeGuestCart: async () => {
+        const guestCartItems = JSON.parse(localStorage.getItem("guest_cart")) || [];
+        if (guestCartItems.length === 0) {
+            return;
+        }
+
+        try {
+            const res = await axiosInstance.post('/shop/cart/merge', { 
+                items: guestCartItems.map(item => ({
+                    productId: item.productId,
+                    quantity: item.quantity
+                })),
+            });
+
+            get().clearCart();
+        } catch (error) {
+            console.log("Error in merging guest cart", error);
+            toast.error(error?.response?.data?.message);
+        }
+    },
+
     addToCart: async ({ userId, productId, quantity }) => {
         try {
             const res = await axiosInstance.post('/shop/cart/add', {userId, productId, quantity});

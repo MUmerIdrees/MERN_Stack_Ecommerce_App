@@ -20,8 +20,8 @@ export const useAuthStore = create((set) => ({
     checkAuth: async () => {
         set({ isCheckingAuth: true });
         try {
-           const res = await axiosInstance.get('/auth/check');
-           set({ authUser: res.data });
+            const res = await axiosInstance.get('/auth/check');
+            set({ authUser: res.data });
         } catch (error) {
             console.error('Error checking auth:', error);
             set({ authUser: null });
@@ -67,19 +67,8 @@ export const useAuthStore = create((set) => ({
             set({ authUser: user });
             toast.success("Logged in successfully");
 
-            // Merge guest cart if exists
-            const guestCartItems = JSON.parse(localStorage.getItem('guest_cart')) || [];
-            if (guestCartItems.length > 0) {
-                await axiosInstance.post('/shop/cart/merge', { 
-                    items: guestCartItems.map(i => ({ 
-                        productId: i.productId, 
-                        quantity: i.quantity 
-                    })),
-                });
-
-                useCartStore.getState().clearCart();
-                await useCartStore.getState().fetchCartItems(user?._id, false);
-            }
+            await useCartStore.getState().mergeGuestCart();
+            await useCartStore.getState().fetchCartItems(user?._id, false);
                 
         } catch (error) {
             toast.error(error?.response?.data?.message);

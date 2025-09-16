@@ -168,11 +168,15 @@ export const checkAuth = (req, res) => {
     }
 };
 
-export const googleAuth = passport.authenticate('google', {
-    scope: ["email", "profile"],
-    prompt: 'select_account',
-    session: false,
-});
+export const googleAuth = (req, res, next) => {
+    const from = req.query.from || '/shop/home';
+
+    passport.authenticate('google', {
+        scope: ['profile', 'email'],
+        state: from,
+        session: false,
+    })(req, res, next);
+};
 
 export const googleAuthCallback = passport.authenticate('google', {
     session: false,

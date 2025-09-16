@@ -24,6 +24,7 @@ import StripeReturnPage from './pages/shopping/StripeReturnPage';
 import PaymentSuccessPage from './pages/shopping/PaymentSuccessPage';
 import SearchProductPage from './pages/shopping/SearchPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import OAuthSuccess from './pages/auth/OAuthSuccess';
 
 function App() {
 
@@ -69,7 +70,8 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/verifyemail" element={
               authUser ? (
-                authUser?.role === "admin" ? <Navigate to="/admin" replace /> : <Navigate to="/shop/home" replace />
+                authUser?.role === "admin" ? <Navigate to="/admin" replace /> :
+                <Navigate to={location.state?.from || "/shop/home"} replace />
               ) : (
                 <EmailVerify />
               )
@@ -78,6 +80,7 @@ function App() {
           <Route path='/forgotpassword' element={<ForgotPassword />} />
           <Route path='/verifyotp' element={<OtpVerify />} />
           <Route path='/updatepassword' element={<UpdatePassword />} />
+          <Route path='/oauth-success' element={<OAuthSuccess />} />
         </Route> 
 
         <Route element={<RoleRedirect only="admin" />}> 
